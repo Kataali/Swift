@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "224018473915",
+    "project_id": "swift-e0400",
+    "storage_bucket": "swift-e0400.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224018473915:android:245cc1b9512a7837c59a9e",
+        "android_client_info": {
+          "package_name": "com.kataali.swift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "224018473915-uluonmto19pq6mupme13o930v49ff1cq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCViNnZ7dAWpCIdgFcbUkgAT4cVRjD4Jo8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "224018473915-uluonmto19pq6mupme13o930v49ff1cq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
