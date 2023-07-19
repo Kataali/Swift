@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:swift/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
@@ -13,8 +14,19 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   // Variables
-  final _auth = FirebaseAuth.instance; //
+  String message = "";
+  final FirebaseAuth _auth = FirebaseAuth.instance; //
   late User loggedInUser;
+  final _firestore = FirebaseFirestore.instance;
+
+  // Functions
+  void messagesStream() async{
+    await for(var messagesSnapshot in _firestore.collection("messages").snapshots()){
+            for(var message in messagesSnapshot.docs){
+
+            }
+    }
+  }
 
   @override
   void initState() {
@@ -46,7 +58,8 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
               icon: Icon(Icons.close),
               onPressed: () {
-                //Implement logout functionality
+                _auth.signOut();
+                Navigator.pop(context);
               }),
         ],
         title: Text('Chat'),
@@ -57,31 +70,46 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              decoration: kMessageContainerDecoration,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      onChanged: (value) {
-                        //Do something with the user input.
-                      },
-                      decoration: kMessageTextFieldDecoration,
-                    ),
+            Column(
+              children: <Widget>[
+                // StreamBuilder(
+                //   builder: (context, snapshot){
+                //     if(snapshot.hasData){
+                //       final messages = snapshot.data;
+                //     }
+                //   },
+                //   stream: _firestore.collection("messages").snapshots(),
+                // ),
+                Container(
+                  decoration: kMessageContainerDecoration,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          onChanged: (value) {
+                            message = value;
+                          },
+                          decoration: kMessageTextFieldDecoration,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _firestore.collection("messages").add({
+                            "message": message,
+                            "sender": loggedInUser.email
+                          });
+                        },
+                        child: Icon(Icons.arrow_forward_ios_rounded),
+                        // child: Text(
+                        //   'Send',
+                        //   style: kSendButtonTextStyle,
+                        // ),
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: () {
-                      //Implement send functionality.
-                    },
-                    child: Icon(Icons.arrow_forward_ios_rounded),
-                    // child: Text(
-                    //   'Send',
-                    //   style: kSendButtonTextStyle,
-                    // ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),

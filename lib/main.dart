@@ -3,8 +3,13 @@ import 'Views/welcomeScreen.dart';
 import 'Views/loginScreen.dart';
 import 'Views/registrationScreen.dart';
 import 'Views/chatScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(Swift());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(Swift());
+}
 class Swift extends StatelessWidget {
   const Swift({Key? key}) : super(key: key);
 
