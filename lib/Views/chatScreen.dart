@@ -1,3 +1,4 @@
+import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/material.dart';
 import 'package:swift/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -70,46 +71,65 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                // StreamBuilder(
-                //   builder: (context, snapshot){
-                //     if(snapshot.hasData){
-                //       final messages = snapshot.data;
-                //     }
-                //   },
-                //   stream: _firestore.collection("messages").snapshots(),
-                // ),
-                Container(
-                  decoration: kMessageContainerDecoration,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: TextField(
-                          onChanged: (value) {
-                            message = value;
-                          },
-                          decoration: kMessageTextFieldDecoration,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _firestore.collection("messages").add({
-                            "message": message,
-                            "sender": loggedInUser.email
-                          });
-                        },
-                        child: Icon(Icons.arrow_forward_ios_rounded),
-                        // child: Text(
-                        //   'Send',
-                        //   style: kSendButtonTextStyle,
-                        // ),
-                      ),
-                    ],
+            StreamBuilder(
+              builder: (context, snapshot){
+                List<Text> messageWidgets = [];
+                if(!snapshot.hasData){
+                  return BlurryModalProgressHUD(
+                    child:Center(),
+                    inAsyncCall: true,
+                  );
+                }
+                  final messages = snapshot.data?.docs;
+                  for(var message in messages!){
+                          final messageText = message.data()['message'];
+                          final sender = message.data()['sender'];
+                          final messageWidget = Text("$messageText from $sender");
+                          messageWidgets.add(messageWidget);
+                  }
+                
+                return Column(
+                  children: messageWidgets,
+                );
+              },
+              stream: _firestore.collection("messages").snapshots(),
+            ),
+            Container(
+              decoration: kMessageContainerDecoration,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) {
+                        message = value;
+                      },
+                      decoration: kMessageTextFieldDecoration,
+                    ),
                   ),
-                ),
-              ],
+                  TextButton(
+                    onPressed: () {
+                      _firestore.collection("messages").add({
+                        "message": message,
+                        "sender": loggedInUser.email
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          'Send',
+                          style: kSendButtonTextStyle,
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded),
+                      ],
+                    ),
+                    // child: Text(
+                    //   'Send',
+                    //   style: kSendButtonTextStyle,
+                    // ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
